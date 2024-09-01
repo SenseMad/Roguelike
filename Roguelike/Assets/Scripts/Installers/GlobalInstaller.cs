@@ -6,7 +6,7 @@ namespace Roguelike.Installers
   {
     public override void InstallBindings()
     {
-      //Container.Bind<InputHandler>().FromNewComponentOnNewGameObject().AsSingle();
+      Container.Bind<InputHandler>().FromNewComponentOnNewGameObject().AsSingle();
     }
   }
 }
