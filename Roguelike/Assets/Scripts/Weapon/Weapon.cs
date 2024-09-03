@@ -9,7 +9,16 @@ public abstract class Weapon : MonoBehaviour
 
   //====================================
 
+  public bool CanShoot { get; private set; }
+
+  //====================================
+
   public abstract void Attack();
+
+  public void TryShoot(bool parValue)
+  {
+    CanShoot = parValue;
+  }
 
   //====================================
 }

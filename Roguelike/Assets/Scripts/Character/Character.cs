@@ -8,7 +8,7 @@ public class Character : MonoBehaviour
 
   //====================================
 
-  public CharacterController Controller { get; private set; }
+  public CharacterController Controller { get; private set; } // CharacterShooterController
 
   public CameraController CameraController { get; private set; }
 
@@ -111,6 +111,8 @@ public class Character : MonoBehaviour
         IsAiming = false;
         break;
     }
+
+    CameraController.AimCamera.gameObject.SetActive(IsAiming);
   }
 
   //====================================

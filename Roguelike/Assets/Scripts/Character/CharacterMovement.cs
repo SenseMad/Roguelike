@@ -3,6 +3,7 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 
 using Sirenix.OdinInspector;
+using Unity.Cinemachine;
 
 [RequireComponent(typeof(CharacterController))]
 public class CharacterMovement : MonoBehaviour
@@ -54,42 +55,6 @@ public class CharacterMovement : MonoBehaviour
 
   //====================================
 
-  /*public void Move(IInput parIInput)
-  {
-    float targetSpeed = isSprint ? _speedRunning : _speedWalking;
-
-    // Если нет ввода, устанавливаем целевую скорость в 0 для плавного замедления
-    if (parIInput.Move() == Vector2.zero)
-      targetSpeed = 0;
-
-    // Получаем текущую горизонтальную скорость
-    float currentHorizontalSpeed = new Vector3(controller.velocity.x, 0.0f, controller.velocity.z).magnitude;
-
-    // Плавно интерполируем текущую скорость к целевой скорости
-    speed = Mathf.Lerp(currentHorizontalSpeed, targetSpeed, Time.deltaTime * _acceleration);
-    speed = Mathf.Round(speed * 1000f) / 1000f; // Округление скорости
-
-    // Получаем направление ввода
-    Vector3 inputDirection = new Vector3(parIInput.Move().x, 0.0f, parIInput.Move().y).normalized;
-
-    // Если есть ввод, корректируем направление и вращение игрока
-    if (parIInput.Move() != Vector2.zero)
-    {
-      targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg + mainCamera.transform.eulerAngles.y;
-
-      float rotationVelocity = 0;
-      float rotation = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetRotation, ref rotationVelocity, 0.12f);
-
-      transform.rotation = Quaternion.Euler(0.0f, rotation, 0.0f);
-    }
-
-    // Рассчитываем целевое направление движения
-    Vector3 targetDirection = Quaternion.Euler(0.0f, targetRotation, 0.0f) * Vector3.forward;
-
-    // Двигаем игрока в целевом направлении с учетом скорости
-    controller.Move(targetDirection.normalized * (speed * Time.deltaTime));
-  }*/
-
   public void Move(IInput parIInput)
   {
     Vector2 frameInput = Vector3.ClampMagnitude(parIInput.Move(), 1.0f);
@@ -102,11 +67,10 @@ public class CharacterMovement : MonoBehaviour
     else
       animationBlend = Mathf.Lerp(animationBlend, 0f, Time.deltaTime * _deceleration);
 
-    //desiredDirection = transform.TransformDirection(desiredDirection);
     desiredDirection = character.CameraController.MainCamera.transform.TransformDirection(desiredDirection);
     desiredDirection.y = 0;
 
-    if (desiredDirection.sqrMagnitude > 0.1f)
+    if (desiredDirection.sqrMagnitude > 0.01f)
     {
       Quaternion targetRotation = Quaternion.LookRotation(desiredDirection);
       transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * _rotationSpeed);

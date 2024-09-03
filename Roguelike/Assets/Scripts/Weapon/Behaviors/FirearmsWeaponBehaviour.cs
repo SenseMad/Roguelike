@@ -4,6 +4,7 @@ using UnityEngine;
 
 using Sirenix.OdinInspector;
 using Zenject;
+using UnityEngine.InputSystem;
 
 public class FirearmsWeaponBehaviour : Weapon
 {
@@ -57,16 +58,6 @@ public class FirearmsWeaponBehaviour : Weapon
 
   protected float lastShotTime;
 
-  private bool isRotating;
-  private Quaternion targetRotation;
-  private float rotationThreshold = 20.0f;
-
-  private bool shouldShoot;
-
-  //====================================
-
-  public bool CanShoot { get; private set; }
-
   //====================================
 
   [Inject]
@@ -77,11 +68,6 @@ public class FirearmsWeaponBehaviour : Weapon
 
   //====================================
 
-  private void Awake()
-  {
-    
-  }
-
   public virtual void Start()
   {
     currentAmountAmmo = _maxAmountAmmo;
@@ -90,59 +76,13 @@ public class FirearmsWeaponBehaviour : Weapon
 
   public virtual void Update()
   {
-    if ((character.IsAiming && !isRotating) || (character.IsShoot && !isRotating))
-      StartRotation();
+    if (CanShoot)
+      Attack();
 
-    if (isRotating)
-      RotateTowardsTarget();
-
-    /*if (character.IsShoot && CanShoot)
-      Attack();*/
+    TryShoot(false);
   }
 
   //====================================
-
-
-  /// <summary>
-  /// Вынести в класс с поворотом камеры!!!!!!!!!!!
-  /// </summary>
-  private void StartRotation()
-  {
-    Vector3 forwardDirection = character.CameraController.MainCamera.transform.forward;
-    forwardDirection.y = 0;
-    targetRotation = Quaternion.LookRotation(forwardDirection);
-
-    float angle = Quaternion.Angle(character.transform.rotation, targetRotation);
-
-    shouldShoot = Mathf.Abs(angle) < 150.0f;
-
-    CanShoot = shouldShoot && character.IsShoot;
-
-    isRotating = true;
-  }
-
-  /// <summary>
-  /// Вынести в класс с поворотом камеры!!!!!!!!!!!
-  /// </summary>
-  private void RotateTowardsTarget()
-  {
-    if (!isRotating)
-      return;
-
-    if (Quaternion.Angle(character.transform.rotation, targetRotation) > rotationThreshold)
-    {
-      character.transform.rotation = Quaternion.Slerp(character.transform.rotation, targetRotation, Time.deltaTime * 15);
-    }
-    else
-    {
-      character.transform.rotation = targetRotation;
-
-      if (CanShoot)
-        Attack();
-
-      isRotating = false;
-    }
-  }
 
   public override void Attack()
   {
@@ -155,7 +95,9 @@ public class FirearmsWeaponBehaviour : Weapon
     if (!(Time.time - lastShotTime > 60.0f / _shotsPerMinutes))
       return;
 
-    Ray ray = new Ray(character.CameraController.MainCamera.transform.position, character.CameraController.MainCamera.transform.forward);
+    Vector2 screenCenterPosition = new Vector2(Screen.width / 2f, Screen.height / 2f);
+    Ray ray = Camera.main.ScreenPointToRay(screenCenterPosition);
+    //Ray ray = new Ray(character.CameraController.MainCamera.transform.position, character.CameraController.MainCamera.transform.forward);
     RaycastHit hit;
 
     Vector3 targetPoint;
@@ -165,14 +107,20 @@ public class FirearmsWeaponBehaviour : Weapon
     else
       targetPoint = ray.GetPoint(100);
 
+    /*if (Physics.Raycast(ray, out hit))
+      targetPoint = hit.point;
+    else
+      targetPoint = ray.GetPoint(100);*/
+
     for (int i = 0; i < _shotCount; i++)
     {
-      Vector3 direction = (_useSpread ? (targetPoint + CalculateSpread()) : targetPoint - _startPoints[0].position).normalized;
+      Vector3 direction = ((_useSpread ? (targetPoint + CalculateSpread()) : targetPoint) - _startPoints[0].position).normalized;
 
-      BaseProjectile projectile = Instantiate(_projectilePrefab, _startPoints[0].position, Quaternion.identity);
+      Quaternion rotation = Quaternion.LookRotation(direction) * Quaternion.Euler(90, 0, 0);
+      //rotation.x = 90.0f;
+      BaseProjectile projectile = Instantiate(_projectilePrefab, _startPoints[0].position, rotation);
       projectile.Initialize(0, character.gameObject);
 
-      projectile.transform.rotation = Quaternion.LookRotation(direction, Vector3.up);
       projectile.BodyRB.velocity = direction * _shotSpeed;
     }
 
