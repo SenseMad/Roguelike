@@ -112,7 +112,6 @@ public class FirearmsWeaponBehaviour : Weapon
       Vector3 direction = ((_useSpread ? (targetPoint + CalculateSpread()) : targetPoint) - _startPoints[0].position).normalized;
 
       Quaternion rotation = Quaternion.LookRotation(direction) * Quaternion.Euler(90, 0, 0);
-      //rotation.x = 90.0f;
       BaseProjectile projectile = Instantiate(_projectilePrefab, _startPoints[0].position, rotation);
       projectile.Initialize(0, character.gameObject);
 
@@ -124,6 +123,7 @@ public class FirearmsWeaponBehaviour : Weapon
     lastShotTime = Time.time;
 
     currentAmountAmmoInMagazine--;
+    PlaySound(_soundFire, 0.3f);
 
     if (_autoRecharge && currentAmountAmmoInMagazine == 0)
     {

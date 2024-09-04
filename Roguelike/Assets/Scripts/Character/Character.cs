@@ -8,7 +8,7 @@ public class Character : MonoBehaviour
 
   //====================================
 
-  public CharacterController Controller { get; private set; } // CharacterShooterController
+  public CharacterController Controller { get; private set; }
 
   public CameraController CameraController { get; private set; }
 

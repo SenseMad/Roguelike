@@ -526,6 +526,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4277929424591870211}
   - component: {fileID: 4617891919161412429}
+  - component: {fileID: 662939168731123543}
+  - component: {fileID: 7241435913229997127}
   m_Layer: 0
   m_Name: SM_Wep_SubMGun_02
   m_TagString: Untagged
@@ -576,10 +578,40 @@ MonoBehaviour:
   _rechargeTime: 1
   _muzzleEffectPrefab: {fileID: 0}
   _hitEffectDestroyDelay: 2
-  _soundFire: {fileID: 0}
+  _soundFire: {fileID: 8300000, guid: c1b34597cd6253a49a105195e868249c, type: 3}
   _soundEmptyAmmo: {fileID: 0}
   _soundRecharge: {fileID: 0}
   _projectilePrefab: {fileID: 4498713661525531041, guid: 4ecac3615492623429fa74cbf38afc29, type: 3}
+--- !u!114 &662939168731123543
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8658959711107712738}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17ee47905d8cc104f8a271d396df9ad5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _position: {x: -0.03, y: 0.102, z: 0.05}
+  _rotation: {x: -90, y: 0, z: 90}
+--- !u!114 &7241435913229997127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8658959711107712738}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c399bedb31fb3444cb3a6e25b0f637fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _weaponInHand: {fileID: 4617891919161412429}
+  _weaponPrefab: {fileID: 8658959711107712738}
+  _dropHeight: 0.5
+  _rayDistance: 5
 --- !u!1 &8921714268883826948
 GameObject:
   m_ObjectHideFlags: 0
