@@ -107,11 +107,6 @@ public class FirearmsWeaponBehaviour : Weapon
     else
       targetPoint = ray.GetPoint(100);
 
-    /*if (Physics.Raycast(ray, out hit))
-      targetPoint = hit.point;
-    else
-      targetPoint = ray.GetPoint(100);*/
-
     for (int i = 0; i < _shotCount; i++)
     {
       Vector3 direction = ((_useSpread ? (targetPoint + CalculateSpread()) : targetPoint) - _startPoints[0].position).normalized;

@@ -26,27 +26,16 @@ public class CharacterShooterController : MonoBehaviour
 
   private void Update()
   {
+    AimRig();
+
     if (character.IsAiming)
     {
-      character.Animator.SetLayerWeight(1, Mathf.Lerp(character.Animator.GetLayerWeight(1), 1.0f, Time.deltaTime * 10.0f));
-
-      Vector2 screenCenterPosition = new Vector2(Screen.width / 2f, Screen.height / 2f);
-      Ray ray = Camera.main.ScreenPointToRay(screenCenterPosition);
-      RaycastHit hit;
-
-      if (Physics.Raycast(ray, out hit))
-        _point.position = hit.point;
-
-      aimRigWeight = 1;
+      character.Animator.SetLayerWeight(1, Mathf.Lerp(character.Animator.GetLayerWeight(1), 1f, Time.deltaTime * 10.0f));
     }
     else
     {
       character.Animator.SetLayerWeight(1, Mathf.Lerp(character.Animator.GetLayerWeight(1), 0.0f, Time.deltaTime * 10.0f));
-
-      aimRigWeight = 0;
     }
-
-    _aimRig.weight = Mathf.Lerp(_aimRig.weight, aimRigWeight, Time.deltaTime * 10.0f);
 
     if ((character.IsAiming && !isRotating) || (character.IsShoot && !isRotating))
       StartRotation();
@@ -55,6 +44,29 @@ public class CharacterShooterController : MonoBehaviour
   }
 
   //====================================
+
+  private void AimRig()
+  {
+    if (character.IsAiming)
+    {
+      Vector2 screenCenterPosition = new Vector2(Screen.width / 2f, Screen.height / 2f);
+      Ray ray = Camera.main.ScreenPointToRay(screenCenterPosition);
+      RaycastHit hit;
+
+      if (Physics.Raycast(ray, out hit))
+        _point.position = hit.point;
+      else
+        _point.position = ray.GetPoint(50);
+
+      aimRigWeight = 1;
+    }
+    else
+    {
+      aimRigWeight = 0;
+    }
+
+    _aimRig.weight = Mathf.Lerp(_aimRig.weight, aimRigWeight, Time.deltaTime * 10.0f);
+  }
 
   private void StartRotation()
   {
