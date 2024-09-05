@@ -11,9 +11,12 @@ public class CharacterAnimationRigs : MonoBehaviour
   //------------------------------------
 
   private Character character;
+  private Camera aimCamera;
 
   private float aimRifleRigWeight;
   private float idleRifleRigWeight;
+
+  private bool isShootingHip;
 
   //====================================
 
@@ -22,55 +25,89 @@ public class CharacterAnimationRigs : MonoBehaviour
     character = GetComponent<Character>();
   }
 
+  private void Start()
+  {
+    aimCamera = Camera.main;
+  }
+
   private void Update()
   {
-    AimRig();
+    if (character.WeaponInventory.ActiveWeapon == null)
+    {
+      character.Animator.SetLayerWeight(1, Mathf.Lerp(character.Animator.GetLayerWeight(1), 0.0f, Time.deltaTime * _speedWeight));
+
+      isShootingHip = false;
+    }
+    else
+    {
+      character.Animator.SetLayerWeight(1, Mathf.Lerp(character.Animator.GetLayerWeight(1), 1f, Time.deltaTime * _speedWeight));
+
+      isShootingHip = character.WeaponInventory.ActiveWeapon.CanShoot;
+
+      AimingActions();
+      ShootingActions();
+
+      character.Animator.SetBool("IsAiming", (character.IsAiming || isShootingHip));
+    }
+
+    RifleRigWeight();
   }
 
   //====================================
 
-  private void AimRig()
+  private void GetAimingPoint()
+  {
+    Vector2 screenCenterPosition = new Vector2(Screen.width / 2f, Screen.height / 2f);
+    Ray ray = aimCamera.ScreenPointToRay(screenCenterPosition);
+    RaycastHit hit;
+
+    Vector3 targetPosition;
+
+    if (Physics.Raycast(ray, out hit))
+      targetPosition = hit.point;
+    else
+      targetPosition = ray.GetPoint(50);
+
+    _point.position = Vector3.Lerp(_point.position, targetPosition, Time.deltaTime * _speedWeight * 2.0f);
+  }
+
+  private void AimingActions()
   {
     if (character.WeaponInventory.ActiveWeapon == null)
+      return;
+
+    if (character.IsAiming)
     {
-      aimRifleRigWeight = 0;
-      idleRifleRigWeight = 0;
-
-      if (character.Animator.GetLayerWeight(1) != 0)
-        character.Animator.SetLayerWeight(1, Mathf.Lerp(character.Animator.GetLayerWeight(1), 0.0f, Time.deltaTime * _speedWeight));
+      GetAimingPoint();
+      return;
     }
-    else
+  }
+
+  private void ShootingActions()
+  {
+    if (character.WeaponInventory.ActiveWeapon == null)
+      return;
+
+    if (character.IsAiming)
+      return;
+
+    if (character.WeaponInventory.ActiveWeapon.CanShoot)
     {
-      if (character.IsAiming)
-      {
-        Vector2 screenCenterPosition = new Vector2(Screen.width / 2f, Screen.height / 2f);
-        Ray ray = Camera.main.ScreenPointToRay(screenCenterPosition);
-        RaycastHit hit;
-
-        Vector3 targetPoint;
-
-        if (Physics.Raycast(ray, out hit))
-          targetPoint = hit.point;
-        else
-          targetPoint = ray.GetPoint(50);
-
-        _point.position = Vector3.Lerp(_point.position, targetPoint, Time.deltaTime * _speedWeight);
-
-        idleRifleRigWeight = 0;
-        aimRifleRigWeight = 1;
-      }
-      else
-      {
-        idleRifleRigWeight = 1;
-        aimRifleRigWeight = 0;
-      }
-      character.Animator.SetLayerWeight(1, Mathf.Lerp(character.Animator.GetLayerWeight(1), 1f, Time.deltaTime * _speedWeight));
+      GetAimingPoint();
+      return;
     }
+  }
+
+  private void RifleRigWeight()
+  {
+    var activeWeapon = character.WeaponInventory.ActiveWeapon;
+    bool rifleWeight = (character.IsAiming || isShootingHip) && (activeWeapon != null);
+
+    idleRifleRigWeight = rifleWeight ? 0 : 1;
+    aimRifleRigWeight = !rifleWeight ? 0 : 1;
 
     _idleRifleRig.weight = Mathf.Lerp(_idleRifleRig.weight, idleRifleRigWeight, Time.deltaTime * _speedWeight);
     _aimRifleRig.weight = Mathf.Lerp(_aimRifleRig.weight, aimRifleRigWeight, Time.deltaTime * _speedWeight);
-
-    character.Animator.SetBool("IsAiming", character.IsAiming);
   }
 
   //====================================
