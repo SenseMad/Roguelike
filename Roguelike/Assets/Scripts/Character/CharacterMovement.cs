@@ -60,10 +60,10 @@ public class CharacterMovement : MonoBehaviour
     Vector2 frameInput = Vector3.ClampMagnitude(parIInput.Move(), 1.0f);
     var desiredDirection = new Vector3(frameInput.x, 0.0f, frameInput.y);
 
-    desiredDirection *= character.IsRunning ? _speedRunning : _speedWalking;
+    desiredDirection *= (!character.IsRunning || character.IsAiming) ? _speedWalking : _speedRunning;
 
     if (desiredDirection != Vector3.zero)
-      animationBlend = Mathf.Lerp(animationBlend, character.IsRunning ? _speedRunning : _speedWalking, Time.deltaTime * _acceleration);
+      animationBlend = Mathf.Lerp(animationBlend, (!character.IsRunning || character.IsAiming) ? _speedWalking : _speedRunning, Time.deltaTime * _acceleration);
     else
       animationBlend = Mathf.Lerp(animationBlend, 0f, Time.deltaTime * _deceleration);
 

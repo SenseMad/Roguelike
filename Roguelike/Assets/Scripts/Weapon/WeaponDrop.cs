@@ -9,6 +9,8 @@ public class WeaponDrop : MonoBehaviour
   [SerializeField] private float _dropHeight = 0.5f;
   [SerializeField] private float _rayDistance = 5f;
 
+  //====================================
+
   private void Update()
   {
     if (Input.GetKeyDown(KeyCode.P))
@@ -16,6 +18,8 @@ public class WeaponDrop : MonoBehaviour
       DropWeapon();
     }
   }
+
+  //====================================
 
   private void DropWeapon()
   {
@@ -42,4 +46,6 @@ public class WeaponDrop : MonoBehaviour
       Debug.Log("Поверхность под игроком не найдена.");
     }
   }
+
+  //====================================
 }
