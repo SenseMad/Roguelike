@@ -54,6 +54,8 @@ public class Character : MonoBehaviour
     inputHandler.AI_Player.Player.Shoot.started += OnShoot;
     inputHandler.AI_Player.Player.Shoot.performed += OnShoot;
     inputHandler.AI_Player.Player.Shoot.canceled += OnShoot;
+
+    inputHandler.AI_Player.Player.Scroll.performed += ScrollWeaponInventory;
   }
 
   private void OnDisable()
@@ -67,6 +69,8 @@ public class Character : MonoBehaviour
     inputHandler.AI_Player.Player.Shoot.started -= OnShoot;
     inputHandler.AI_Player.Player.Shoot.performed -= OnShoot;
     inputHandler.AI_Player.Player.Shoot.canceled -= OnShoot;
+
+    inputHandler.AI_Player.Player.Scroll.performed -= ScrollWeaponInventory;
   }
 
   //====================================
@@ -112,7 +116,21 @@ public class Character : MonoBehaviour
         break;
     }
 
+    if (WeaponInventory.ActiveWeapon == null)
+      IsAiming = false;
+
     CameraController.AimCamera.gameObject.SetActive(IsAiming);
+  }
+
+  private void ScrollWeaponInventory(InputAction.CallbackContext context)
+  {
+    if (WeaponInventory == null)
+      return;
+
+    float scrollValue = context.valueType.IsEquivalentTo(typeof(Vector2)) ? Mathf.Sign(context.ReadValue<Vector2>().y) : 1.0f;
+
+    Weapon nextWeapon = scrollValue > 0 ? WeaponInventory.GetNextWeapon() : WeaponInventory.GetLastWeapon();
+    WeaponInventory.Equip(nextWeapon);
   }
 
   //====================================

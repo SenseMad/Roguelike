@@ -11,6 +11,17 @@ public abstract class Weapon : MonoBehaviour
 
   public bool CanShoot { get; private set; }
 
+  public WeaponPosition WeaponPosition { get; private set; }
+  public WeaponInteractable WeaponInteractable { get; private set; }
+
+  //====================================
+
+  protected virtual void Awake()
+  {
+    WeaponPosition = GetComponent<WeaponPosition>();
+    WeaponInteractable = GetComponentInChildren<WeaponInteractable>();
+  }
+
   //====================================
 
   public abstract void Attack();

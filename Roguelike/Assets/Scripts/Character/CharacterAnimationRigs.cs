@@ -106,6 +106,12 @@ public class CharacterAnimationRigs : MonoBehaviour
     idleRifleRigWeight = rifleWeight ? 0 : 1;
     aimRifleRigWeight = !rifleWeight ? 0 : 1;
 
+    if (activeWeapon == null)
+    {
+      idleRifleRigWeight = 0;
+      aimRifleRigWeight = 0;
+    }
+
     _idleRifleRig.weight = Mathf.Lerp(_idleRifleRig.weight, idleRifleRigWeight, Time.deltaTime * _speedWeight);
     _aimRifleRig.weight = Mathf.Lerp(_aimRifleRig.weight, aimRifleRigWeight, Time.deltaTime * _speedWeight);
   }

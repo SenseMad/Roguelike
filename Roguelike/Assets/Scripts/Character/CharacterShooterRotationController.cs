@@ -26,6 +26,8 @@ public class CharacterShooterRotationController : MonoBehaviour
 
   private void StartRotation()
   {
+
+
     Vector3 forwardDirection = character.CameraController.MainCamera.transform.forward;
     forwardDirection.y = 0;
     targetRotation = Quaternion.LookRotation(forwardDirection);
@@ -36,7 +38,8 @@ public class CharacterShooterRotationController : MonoBehaviour
 
     isRotating = true;
 
-    character.WeaponInventory.ActiveWeapon.TryShoot(shouldShoot && character.IsShoot && isRotating);
+    if (character.WeaponInventory.ActiveWeapon != null)
+      character.WeaponInventory.ActiveWeapon.TryShoot(shouldShoot && character.IsShoot && isRotating);
   }
 
   private void RotateTowardsTarget()

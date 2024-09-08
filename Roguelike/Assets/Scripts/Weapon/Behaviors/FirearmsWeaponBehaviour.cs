@@ -1,10 +1,8 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 using Sirenix.OdinInspector;
-using Zenject;
-using UnityEngine.InputSystem;
 
 public class FirearmsWeaponBehaviour : Weapon
 {

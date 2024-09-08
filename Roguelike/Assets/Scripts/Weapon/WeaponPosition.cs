@@ -13,10 +13,10 @@ public class WeaponPosition : MonoBehaviour
 
   //====================================
 
-  private void Awake()
+  public void SetPosition()
   {
-    //transform.localPosition = _position;
-    //transform.localRotation = Quaternion.Euler(_rotation);
+    transform.localPosition = _position;
+    transform.localRotation = Quaternion.Euler(_rotation);
   }
 
   //====================================

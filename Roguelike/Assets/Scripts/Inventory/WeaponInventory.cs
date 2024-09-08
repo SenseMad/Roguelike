@@ -8,109 +8,151 @@ public class WeaponInventory : MonoBehaviour
 {
   [SerializeField, MinValue(0)] private int _maxAmountStoredWeapons = 2;
 
+  [SerializeField] private Transform _container;
+
   //------------------------------------
 
-  private Weapon[] weapons;
+  private List<Weapon> listWeapons = new List<Weapon>();
 
   //====================================
 
   public Weapon ActiveWeapon { get; private set; }
 
-  public int ActiveWeaponIndex { get; private set; } = -1;
-
   //====================================
 
-  private void Start()
+  public Weapon GetLastWeapon()
   {
-    weapons = new Weapon[_maxAmountStoredWeapons];
+    if (listWeapons.Count == 0)
+      return null;
 
-    Initialize(0);
+    int previousWeaponIndex = listWeapons.IndexOf(ActiveWeapon) - 1;
+    if (previousWeaponIndex < 0)
+      previousWeaponIndex = listWeapons.Count - 1;
+
+    return listWeapons[previousWeaponIndex];
+  }
+
+  public Weapon GetNextWeapon()
+  {
+    if (listWeapons.Count == 0)
+      return null;
+
+    int nextWeaponIndex = listWeapons.IndexOf(ActiveWeapon) + 1;
+    if (nextWeaponIndex > listWeapons.Count - 1)
+      nextWeaponIndex = 0;
+
+    return listWeapons[nextWeaponIndex];
   }
 
   //====================================
 
-  public void Initialize(int parIndexStartingWeapon = 0)
+  public Weapon Equip(Weapon parWeapon)
   {
-    Weapon[] tempWeapons = GetComponentsInChildren<Weapon>(true);
-
-    for (int i = 0; i < tempWeapons.Length; i++)
-    {
-      weapons[i] = tempWeapons[i];
-    }
-
-    Equip(parIndexStartingWeapon);
-  }
-
-  public Weapon Equip(int parIndex)
-  {
-    if (weapons == null)
+    if (parWeapon == null)
       return ActiveWeapon;
 
-    if (parIndex > weapons.Length - 1 || parIndex < 0)
+    if (listWeapons.Count == 0)
       return ActiveWeapon;
 
-    if (parIndex == ActiveWeaponIndex)
+    if (!listWeapons.Contains(parWeapon))
       return ActiveWeapon;
 
-    ActiveWeaponIndex = parIndex;
-    ActiveWeapon = weapons[parIndex];
+    if (parWeapon == ActiveWeapon)
+      return ActiveWeapon;
+
+    if (ActiveWeapon != null)
+      ActiveWeapon.gameObject.SetActive(false);
+
+    ActiveWeapon = parWeapon;
     ActiveWeapon.gameObject.SetActive(true);
+    ActiveWeapon.WeaponInteractable.SetCollider(false);
 
     return ActiveWeapon;
   }
 
   public void Add(Weapon parWeapon)
   {
-    if (weapons.Length - 1 >= _maxAmountStoredWeapons)
+    if (parWeapon == null)
+      return;
+
+    if (listWeapons.Count >= _maxAmountStoredWeapons)
     {
       ReplaceActive(parWeapon);
       return;
     }
 
-    for (int i = 0; i < weapons.Length - 1; i++)
-    {
-      if (weapons[i] != null)
-        continue;
+    parWeapon.transform.SetParent(_container);
+    parWeapon.WeaponPosition.SetPosition();
+    listWeapons.Add(parWeapon);
 
-      weapons[i] = parWeapon;
-      Equip(i);
-      break;
-    }
-  }
-
-  public void Remove(Weapon parWeapon)
-  {
-    for (int i = 0; i < weapons.Length - 1; i++)
-    {
-      if (weapons[i] != parWeapon)
-        continue;
-
-      //weapons[i] = null;
-      Destroy(weapons[i]);
-      break;
-    }
-
-    for (int i = weapons.Length - 1; i > 0; i--)
-    {
-      if (weapons[i] == null)
-        continue;
-
-      Equip(i);
-      break;
-    }
+    Equip(parWeapon);
   }
 
   public void ReplaceActive(Weapon parWeapon)
   {
-    for (int i = 0; i < weapons.Length - 1; i++)
-    {
-      if (weapons[i] == null)
-        continue;
+    if (parWeapon == null)
+      return;
 
-      weapons[i] = parWeapon;
-      Equip(i);
-      break;
-    }
+    Vector3 lastWeaponPosition = parWeapon.transform.position;
+    Quaternion lastWeaponRotation = parWeapon.transform.rotation;
+
+    ActiveWeapon.transform.SetParent(null);
+    ActiveWeapon.transform.SetPositionAndRotation(lastWeaponPosition, lastWeaponRotation);
+    ActiveWeapon.WeaponInteractable.SetCollider(true);
+
+    parWeapon.transform.SetParent(_container);
+    parWeapon.WeaponPosition.SetPosition();
+
+    int currentWeaponIndex = listWeapons.IndexOf(ActiveWeapon);
+    listWeapons[currentWeaponIndex] = parWeapon;
+
+    var previousWeapon = ActiveWeapon;
+
+    Equip(parWeapon);
+
+    if (!previousWeapon.gameObject.activeSelf)
+      previousWeapon.gameObject.SetActive(true);
+  }
+
+  public void Remove(Weapon parWeapon)
+  {
+    if (parWeapon == null)
+      return;
+
+    if (!listWeapons.Contains(parWeapon))
+      return;
+
+    listWeapons.Remove(parWeapon);
+    Destroy(ActiveWeapon.gameObject);
+    ActiveWeapon = null;
+
+    EquipLastWeapon();
+  }
+
+  public void DropActive(Vector3 parDropPosition)
+  {
+    if (ActiveWeapon == null)
+      return;
+
+    ActiveWeapon.transform.SetParent(null);
+    ActiveWeapon.transform.position = parDropPosition;
+    ActiveWeapon.WeaponInteractable.SetCollider(true);
+
+    listWeapons.Remove(ActiveWeapon);
+    ActiveWeapon = null;
+
+    EquipLastWeapon();
+  }
+
+  //====================================
+
+  private void EquipLastWeapon()
+  {
+    if (listWeapons.Count == 0)
+      return;
+
+    var lastWeapon = listWeapons[listWeapons.Count - 1];
+    Equip(lastWeapon);
   }
 
   //====================================

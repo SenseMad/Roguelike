@@ -4,7 +4,7 @@ using UnityEngine;
 
 using Sirenix.OdinInspector;
 
-public sealed class PistolWeapon : FirearmsWeaponBehaviour
+public sealed class RifleWeapon : FirearmsWeaponBehaviour
 {
 
 
