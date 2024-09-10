@@ -73,6 +73,15 @@ public partial class @AI_Player: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""Recharge"",
+                    ""type"": ""Button"",
+                    ""id"": ""bc7bb927-8ce3-42a5-b782-45139bce2d55"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""Interact"",
                     ""type"": ""Button"",
                     ""id"": ""32e0a66a-efa9-4ab2-80fa-2a72d35a8248"",
@@ -267,6 +276,17 @@ public partial class @AI_Player: IInputActionCollection2, IDisposable
                     ""action"": ""Scroll"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e23e54aa-f211-4295-bf22-4bbd916c765f"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KeyboardMouse"",
+                    ""action"": ""Recharge"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -297,6 +317,7 @@ public partial class @AI_Player: IInputActionCollection2, IDisposable
         m_Player_Look = m_Player.FindAction("Look", throwIfNotFound: true);
         m_Player_Shoot = m_Player.FindAction("Shoot", throwIfNotFound: true);
         m_Player_Aim = m_Player.FindAction("Aim", throwIfNotFound: true);
+        m_Player_Recharge = m_Player.FindAction("Recharge", throwIfNotFound: true);
         m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
         m_Player_Scroll = m_Player.FindAction("Scroll", throwIfNotFound: true);
     }
@@ -365,6 +386,7 @@ public partial class @AI_Player: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Look;
     private readonly InputAction m_Player_Shoot;
     private readonly InputAction m_Player_Aim;
+    private readonly InputAction m_Player_Recharge;
     private readonly InputAction m_Player_Interact;
     private readonly InputAction m_Player_Scroll;
     public struct PlayerActions
@@ -376,6 +398,7 @@ public partial class @AI_Player: IInputActionCollection2, IDisposable
         public InputAction @Look => m_Wrapper.m_Player_Look;
         public InputAction @Shoot => m_Wrapper.m_Player_Shoot;
         public InputAction @Aim => m_Wrapper.m_Player_Aim;
+        public InputAction @Recharge => m_Wrapper.m_Player_Recharge;
         public InputAction @Interact => m_Wrapper.m_Player_Interact;
         public InputAction @Scroll => m_Wrapper.m_Player_Scroll;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
@@ -402,6 +425,9 @@ public partial class @AI_Player: IInputActionCollection2, IDisposable
             @Aim.started += instance.OnAim;
             @Aim.performed += instance.OnAim;
             @Aim.canceled += instance.OnAim;
+            @Recharge.started += instance.OnRecharge;
+            @Recharge.performed += instance.OnRecharge;
+            @Recharge.canceled += instance.OnRecharge;
             @Interact.started += instance.OnInteract;
             @Interact.performed += instance.OnInteract;
             @Interact.canceled += instance.OnInteract;
@@ -427,6 +453,9 @@ public partial class @AI_Player: IInputActionCollection2, IDisposable
             @Aim.started -= instance.OnAim;
             @Aim.performed -= instance.OnAim;
             @Aim.canceled -= instance.OnAim;
+            @Recharge.started -= instance.OnRecharge;
+            @Recharge.performed -= instance.OnRecharge;
+            @Recharge.canceled -= instance.OnRecharge;
             @Interact.started -= instance.OnInteract;
             @Interact.performed -= instance.OnInteract;
             @Interact.canceled -= instance.OnInteract;
@@ -466,6 +495,7 @@ public partial class @AI_Player: IInputActionCollection2, IDisposable
         void OnLook(InputAction.CallbackContext context);
         void OnShoot(InputAction.CallbackContext context);
         void OnAim(InputAction.CallbackContext context);
+        void OnRecharge(InputAction.CallbackContext context);
         void OnInteract(InputAction.CallbackContext context);
         void OnScroll(InputAction.CallbackContext context);
     }

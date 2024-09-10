@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.TextCore.Text;
 using Zenject;
 
 public class Character : MonoBehaviour
@@ -18,9 +19,15 @@ public class Character : MonoBehaviour
 
   public bool IsRunning { get; private set; }
 
+  #region Chracter Weapon
+
   public bool IsShoot { get; private set; }
 
   public bool IsAiming { get; private set; }
+
+  public bool IsRecharge { get; private set; }
+
+  #endregion
 
   //====================================
 
@@ -55,6 +62,9 @@ public class Character : MonoBehaviour
     inputHandler.AI_Player.Player.Shoot.performed += OnShoot;
     inputHandler.AI_Player.Player.Shoot.canceled += OnShoot;
 
+    inputHandler.AI_Player.Player.Recharge.started += OnRecharge;
+    //inputHandler.AI_Player.Player.Recharge.canceled += OnRecharge;
+
     inputHandler.AI_Player.Player.Scroll.performed += ScrollWeaponInventory;
   }
 
@@ -69,6 +79,9 @@ public class Character : MonoBehaviour
     inputHandler.AI_Player.Player.Shoot.started -= OnShoot;
     inputHandler.AI_Player.Player.Shoot.performed -= OnShoot;
     inputHandler.AI_Player.Player.Shoot.canceled -= OnShoot;
+
+    inputHandler.AI_Player.Player.Recharge.started -= OnRecharge;
+    //inputHandler.AI_Player.Player.Recharge.canceled -= OnRecharge;
 
     inputHandler.AI_Player.Player.Scroll.performed -= ScrollWeaponInventory;
   }
@@ -122,6 +135,18 @@ public class Character : MonoBehaviour
     CameraController.AimCamera.gameObject.SetActive(IsAiming);
   }
 
+  private void OnRecharge(InputAction.CallbackContext context)
+  {
+    if (WeaponInventory.ActiveWeapon == null)
+      return;
+
+    if (IsRecharge)
+      return;
+
+    IsRecharge = true;
+    WeaponInventory.ActiveWeapon.Recharge();
+  }
+
   private void ScrollWeaponInventory(InputAction.CallbackContext context)
   {
     if (WeaponInventory == null)
@@ -129,8 +154,17 @@ public class Character : MonoBehaviour
 
     float scrollValue = context.valueType.IsEquivalentTo(typeof(Vector2)) ? Mathf.Sign(context.ReadValue<Vector2>().y) : 1.0f;
 
+    Weapon currentWeapon = WeaponInventory.ActiveWeapon;
     Weapon nextWeapon = scrollValue > 0 ? WeaponInventory.GetNextWeapon() : WeaponInventory.GetLastWeapon();
     WeaponInventory.Equip(nextWeapon);
+  }
+
+  //====================================
+
+  public void OnRechargeAnim()
+  {
+    Animator.SetBool("IsReloading", false);
+    IsRecharge = false;
   }
 
   //====================================

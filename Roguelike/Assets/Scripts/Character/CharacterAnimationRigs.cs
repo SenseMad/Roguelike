@@ -106,7 +106,7 @@ public class CharacterAnimationRigs : MonoBehaviour
     idleRifleRigWeight = rifleWeight ? 0 : 1;
     aimRifleRigWeight = !rifleWeight ? 0 : 1;
 
-    if (activeWeapon == null)
+    if (activeWeapon == null || character.IsRecharge)
     {
       idleRifleRigWeight = 0;
       aimRifleRigWeight = 0;

@@ -51,6 +51,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Recharge",
+                    "type": "Button",
+                    "id": "bc7bb927-8ce3-42a5-b782-45139bce2d55",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Interact",
                     "type": "Button",
                     "id": "32e0a66a-efa9-4ab2-80fa-2a72d35a8248",
@@ -243,6 +252,17 @@
                     "processors": "",
                     "groups": "KeyboardMouse",
                     "action": "Scroll",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e23e54aa-f211-4295-bf22-4bbd916c765f",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyboardMouse",
+                    "action": "Recharge",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

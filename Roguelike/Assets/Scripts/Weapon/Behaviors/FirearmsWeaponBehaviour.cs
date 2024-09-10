@@ -3,6 +3,7 @@ using UnityEngine;
 using Zenject;
 
 using Sirenix.OdinInspector;
+using UnityEngine.TextCore.Text;
 
 public class FirearmsWeaponBehaviour : Weapon
 {
@@ -58,6 +59,11 @@ public class FirearmsWeaponBehaviour : Weapon
 
   //====================================
 
+  public bool IsRecharge { get; private set; }
+  public bool IsRechargeNotCompleted { get; private set; }
+
+  //====================================
+
   [Inject]
   private void Construct(Character parCharacter)
   {
@@ -70,6 +76,13 @@ public class FirearmsWeaponBehaviour : Weapon
   {
     currentAmountAmmo = _maxAmountAmmo;
     currentAmountAmmoInMagazine = _maxAmountAmmoInMagazine;
+  }
+
+  private void OnDisable()
+  {
+    character.OnRechargeAnim();
+
+    coroutineRecharge = null;
   }
 
   public virtual void Update()
@@ -125,11 +138,11 @@ public class FirearmsWeaponBehaviour : Weapon
 
     if (_autoRecharge && currentAmountAmmoInMagazine == 0)
     {
-      PerformRecharge();
+      Recharge();
     }
   }
 
-  public virtual void Recharge(int parValue)
+  public void Recharge(int parValue)
   {
     if (coroutineRecharge != null)
     {
@@ -158,12 +171,12 @@ public class FirearmsWeaponBehaviour : Weapon
     coroutineRecharge = StartCoroutine(CoroutineRecharge(parValue));
   }
 
-  //====================================
-
-  private void PerformRecharge()
+  public override void Recharge()
   {
     Recharge(_maxAmountAmmoInMagazine);
   }
+
+  //====================================
 
   private IEnumerator CoroutineRecharge(int parValue)
   {
@@ -176,9 +189,12 @@ public class FirearmsWeaponBehaviour : Weapon
     if (amountAmmoBefore - parValue <= 0)
       parValue = amountAmmoBefore;
 
+    character.Animator.SetBool("IsReloading", true);
+
     PlaySound(_soundRecharge, 0.3f);
 
-    yield return new WaitForSeconds(_rechargeTime);
+    while (character.IsRecharge)
+      yield return null;
 
     currentAmountAmmo -= parValue;
     currentAmountAmmoInMagazine += parValue;
