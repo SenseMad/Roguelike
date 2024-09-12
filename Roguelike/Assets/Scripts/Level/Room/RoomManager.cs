@@ -117,25 +117,6 @@ public class RoomManager : MonoBehaviour
       listRoomsCreated.Add(newRoom);
       OnCreatedRoom?.Invoke(newRoom);
     }
-
-    /*int newIndexRoom = Random.Range(0, roomPrefabs.Count);
-    Room newRoom = roomPrefabs[newIndexRoom];
-
-    int numberAttempts = 0;
-
-    while (listRoomsCreated.Contains(newRoom))
-    {
-      newIndexRoom = Random.Range(0, roomPrefabs.Count);
-      newRoom = roomPrefabs[newIndexRoom];
-
-      if (numberAttempts > roomPrefabs.Count)
-        return;
-
-      numberAttempts++;
-    }
-
-    listRoomsCreated.Add(newRoom);
-    OnCreatedRoom?.Invoke(newRoom);*/
   }
 
   public void RemoveRoom()
