@@ -8,7 +8,7 @@ public class LocationData : ScriptableObject
 
   [SerializeField] private int _numberRooms;
 
-  [SerializeField] private List<GameObject> _listRoomPrefabs;
+  [SerializeField] private List<Room> _listRoomPrefabs;
 
   //====================================
 
@@ -16,7 +16,7 @@ public class LocationData : ScriptableObject
 
   public int NumberRooms => _numberRooms;
 
-  public List<GameObject> ListRoomPrefabs => _listRoomPrefabs;
+  public List<Room> ListRoomPrefabs => _listRoomPrefabs;
 
   //====================================
 }
