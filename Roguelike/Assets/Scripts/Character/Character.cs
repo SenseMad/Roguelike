@@ -63,7 +63,6 @@ public class Character : MonoBehaviour
     inputHandler.AI_Player.Player.Shoot.canceled += OnShoot;
 
     inputHandler.AI_Player.Player.Recharge.started += OnRecharge;
-    //inputHandler.AI_Player.Player.Recharge.canceled += OnRecharge;
 
     inputHandler.AI_Player.Player.Scroll.performed += ScrollWeaponInventory;
   }
@@ -81,7 +80,6 @@ public class Character : MonoBehaviour
     inputHandler.AI_Player.Player.Shoot.canceled -= OnShoot;
 
     inputHandler.AI_Player.Player.Recharge.started -= OnRecharge;
-    //inputHandler.AI_Player.Player.Recharge.canceled -= OnRecharge;
 
     inputHandler.AI_Player.Player.Scroll.performed -= ScrollWeaponInventory;
   }

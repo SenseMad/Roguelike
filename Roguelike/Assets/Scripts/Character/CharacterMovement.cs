@@ -1,9 +1,7 @@
-using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 using Sirenix.OdinInspector;
-using Unity.Cinemachine;
 
 [RequireComponent(typeof(CharacterController))]
 public class CharacterMovement : MonoBehaviour

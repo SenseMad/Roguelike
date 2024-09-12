@@ -26,8 +26,6 @@ public class CharacterShooterRotationController : MonoBehaviour
 
   private void StartRotation()
   {
-
-
     Vector3 forwardDirection = character.CameraController.MainCamera.transform.forward;
     forwardDirection.y = 0;
     targetRotation = Quaternion.LookRotation(forwardDirection);

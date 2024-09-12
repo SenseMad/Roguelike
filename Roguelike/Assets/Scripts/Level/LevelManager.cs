@@ -1,10 +1,15 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RoomManager : MonoBehaviour
+public class LevelManager : MonoBehaviour
 {
-  [SerializeField] private List<GameObject> _roomPrefabs;
+  [SerializeField] private LocationData _locationData;
+
+  //====================================
+
+  public RoomManager RoomManager { get; private set; }
 
   //====================================
 
@@ -16,11 +21,10 @@ public class RoomManager : MonoBehaviour
 
   //====================================
 
-
-
-  //====================================
-
-
+  public void Initialize(LocationData parLocationData)
+  {
+    _locationData = parLocationData;
+  }
 
   //====================================
 }
