@@ -17,13 +17,17 @@ public class CharacterWeaponDrop : MonoBehaviour
   //====================================
 
   [Inject]
-  private void Construct(InputHandler parInputHandler, Character parCharacter)
+  private void Construct(InputHandler parInputHandler)
   {
     inputHandler = parInputHandler;
-    character = parCharacter;
   }
 
   //====================================
+
+  private void Awake()
+  {
+    character = Character.Instance;
+  }
 
   private void Update()
   {

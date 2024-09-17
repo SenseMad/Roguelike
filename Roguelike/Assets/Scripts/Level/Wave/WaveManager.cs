@@ -3,21 +3,34 @@ using UnityEngine;
 
 public class WaveManager : MonoBehaviour
 {
-  [SerializeField] private SingleWave[] _singleWaves;
+  [SerializeField] private Wave[] _waves;
+
+  [SerializeField] private float _timeStartNextWave = 0.0f; // Time until the start of the next wave
+
+  //------------------------------------
+
+  private float tempTimeStartNextWave;
+
+  private bool isWaveStarted;
+  private bool isWavesIsOver;
 
   //====================================
 
   public int CurrentWaveIndex { get; private set; } = -1;
 
-  public SingleWave CurrentActiveWave { get; private set; }
+  public Wave CurrentActiveWave { get; private set; }
+
+  public Wave[] Waves { get => _waves; set => _waves = value; }
 
   //====================================
 
-  public event Action<int> OnWaveBegun;
+  public event Action<Wave> OnWaveBegun;
 
-  public event Action<int> OnWaveCompleted;
+  public event Action<Wave> OnWaveCompleted;
 
-  public event Action OnWavesIsOver;
+  public event Action<Wave> OnWaveStarted;
+
+  public event Action OnWavesAreOver;
 
   //====================================
 
@@ -26,63 +39,107 @@ public class WaveManager : MonoBehaviour
     Initialize();
   }
 
+  private void Start()
+  {
+    StartWaves();
+  }
+
   private void OnEnable()
   {
-    foreach (var singleWave in _singleWaves)
-    {
-      singleWave.OnWaveIsOver += NextWave;
-    }
+    OnWaveCompleted += WaveComplete;
   }
 
   private void OnDisable()
   {
-    foreach (var singleWave in _singleWaves)
-    {
-      singleWave.OnWaveIsOver -= NextWave;
-    }
+    OnWaveCompleted -= WaveComplete;
+  }
+
+  private void Update()
+  {
+    NextWaveTime();
   }
 
   //====================================
 
   public void Initialize()
   {
-    _singleWaves = GetComponentsInChildren<SingleWave>(true);
+    _waves = GetComponentsInChildren<Wave>(true);
 
-    for (int i = 0; i < _singleWaves.Length; i++)
+    foreach (var wave in _waves)
     {
-      _singleWaves[i].gameObject.SetActive(false);
+      wave.gameObject.SetActive(false);
     }
   }
 
-  public void StartWave()
+  public void StartWaves()
   {
-    CurrentWaveIndex++;
+    isWaveStarted = true;
 
-    _singleWaves[CurrentWaveIndex].gameObject.SetActive(true);
-
-    OnWaveBegun?.Invoke(CurrentWaveIndex);
+    NextWave();
   }
 
   public void NextWave()
   {
-    if (CurrentWaveIndex < _singleWaves.Length - 1)
+    if (isWavesIsOver)
+      return;
+
+    CurrentWaveIndex++;
+
+    CurrentActiveWave?.DeactivateWave();
+
+    if (CurrentWaveIndex > _waves.Length - 1)
     {
-      OnWaveCompleted?.Invoke(CurrentWaveIndex);
+      OnWavesAreOver?.Invoke();
+      isWavesIsOver = true;
+      isWaveStarted = false;
+      enabled = false;
       return;
     }
 
-    OnWavesIsOver?.Invoke();
+    CurrentActiveWave = _waves[CurrentWaveIndex];
+
+    CurrentActiveWave.ActivateWave();
+    OnWaveStarted?.Invoke(CurrentActiveWave);
+    tempTimeStartNextWave = 0;
+  }
+
+  public void WaveComplete(Wave parWave)
+  {
+    parWave.OnWaveAreOverInvoke();
+
+    NextWave();
+  }
+
+  public void NextWaveTime()
+  {
+    if (isWavesIsOver)
+      return;
+
+    if (!isWaveStarted)
+      return;
+
+    tempTimeStartNextWave += Time.deltaTime;
+    if (tempTimeStartNextWave >= _timeStartNextWave)
+    {
+      WaveComplete(CurrentActiveWave);
+      tempTimeStartNextWave = 0;
+    }
   }
 
   public int GetNumberEnemiesWaves()
   {
     int count = 0;
-    foreach (var singleWave in _singleWaves)
+    foreach (var wave in _waves)
     {
-      count += singleWave.GetNumberEnemies();
+      count += wave.GetNumberEnemiesWave();
     }
 
     return count;
+  }
+
+  public void OnWaveCompletedInvoke()
+  {
+    OnWaveCompleted?.Invoke(CurrentActiveWave);
   }
 
   //====================================

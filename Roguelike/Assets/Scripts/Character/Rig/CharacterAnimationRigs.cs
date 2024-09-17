@@ -5,13 +5,15 @@ public class CharacterAnimationRigs : MonoBehaviour
 {
   [SerializeField] private Rig _aimRifleRig;
   [SerializeField] private Rig _idleRifleRig;
-  [SerializeField] private Transform _point;
+  //[SerializeField] private Transform _point;
   [SerializeField] private float _speedWeight = 10.0f;
 
   //------------------------------------
 
   private Character character;
   private Camera aimCamera;
+
+  public Transform DynamicPoint { get; set; }
 
   private float aimRifleRigWeight;
   private float idleRifleRigWeight;
@@ -28,6 +30,10 @@ public class CharacterAnimationRigs : MonoBehaviour
   private void Start()
   {
     aimCamera = Camera.main;
+
+    character.Animator.enabled = false;
+    character.Animator.Rebind();
+    character.Animator.enabled = true;
   }
 
   private void Update()
@@ -68,7 +74,7 @@ public class CharacterAnimationRigs : MonoBehaviour
     else
       targetPosition = ray.GetPoint(50);
 
-    _point.position = Vector3.Lerp(_point.position, targetPosition, Time.deltaTime * _speedWeight * 2.0f);
+    DynamicPoint.position = Vector3.Lerp(DynamicPoint.position, targetPosition, Time.deltaTime * _speedWeight * 2.0f);
   }
 
   private void AimingActions()
@@ -114,6 +120,13 @@ public class CharacterAnimationRigs : MonoBehaviour
 
     _idleRifleRig.weight = Mathf.Lerp(_idleRifleRig.weight, idleRifleRigWeight, Time.deltaTime * _speedWeight);
     _aimRifleRig.weight = Mathf.Lerp(_aimRifleRig.weight, aimRifleRigWeight, Time.deltaTime * _speedWeight);
+  }
+
+  //====================================
+
+  public void GetDynamicPoint(Transform parTransform)
+  {
+    DynamicPoint = parTransform;
   }
 
   //====================================

@@ -16,4 +16,3 @@ MonoBehaviour:
   _numberRooms: 0
   _listRoomPrefabs:
   - {fileID: 5608830121812156433, guid: 72a0c51d36f735a4faca0a88bc1e388d, type: 3}
-  - {fileID: 5608830121812156433, guid: af54c61f9358ca14cba403e0643b6694, type: 3}

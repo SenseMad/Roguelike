@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.TextCore.Text;
 using Zenject;
 
-public class Character : MonoBehaviour
+public class Character : SingletonInSceneNoInstance<Character>
 {
   private InputHandler inputHandler;
 
@@ -39,8 +39,10 @@ public class Character : MonoBehaviour
 
   //====================================
 
-  private void Awake()
+  protected new void Awake()
   {
+    base.Awake();
+
     Controller = GetComponent<CharacterController>();
 
     CameraController = GetComponentInChildren<CameraController>();

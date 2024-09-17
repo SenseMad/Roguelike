@@ -64,13 +64,12 @@ public class FirearmsWeaponBehaviour : Weapon
 
   //====================================
 
-  [Inject]
-  private void Construct(Character parCharacter)
+  protected override void Awake()
   {
-    character = parCharacter;
-  }
+    base.Awake();
 
-  //====================================
+    character = Character.Instance;
+  }
 
   public virtual void Start()
   {

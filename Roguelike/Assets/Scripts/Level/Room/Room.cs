@@ -1,13 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class Room : MonoBehaviour
 {
+  [SerializeField] private Transform _spawnPointCharacter;
+
   [SerializeField] private List<Transform> _spawnPointsEnemies;
 
   //------------------------------------
+
+  private Character character;
 
   private List<Transform> spawnPointUsed = new List<Transform>();
 
@@ -17,11 +20,15 @@ public class Room : MonoBehaviour
 
   //====================================
 
+  private void Awake()
+  {
+    character = Character.Instance;
+  }
 
-
-  //====================================
-
-
+  private void OnEnable()
+  {
+    //character.transform.position = _spawnPointCharacter.position;
+  }
 
   //====================================
 

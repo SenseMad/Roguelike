@@ -1,3 +1,4 @@
+using UnityEngine;
 using Zenject;
 
 namespace Roguelike.Installers
@@ -9,8 +10,6 @@ namespace Roguelike.Installers
       Container.Bind<LevelManager>().FromComponentInHierarchy().AsSingle().NonLazy();
 
       Container.Bind<RoomManager>().FromComponentInHierarchy().AsSingle().NonLazy();
-
-      Container.Bind<Character>().FromComponentInHierarchy().AsSingle().NonLazy();
     }
   }
 }

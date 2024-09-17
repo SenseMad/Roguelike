@@ -12,17 +12,11 @@ public class WeaponInteractable : MonoBehaviour, IInteractable
 
   private void Awake()
   {
+    character = Character.Instance;
+
     weapon = GetComponentInParent<Weapon>();
 
     interactCollider = GetComponent<Collider>();
-  }
-
-  //====================================
-
-  [Inject]
-  private void Construct(Character parCharacter)
-  {
-    character = parCharacter;
   }
 
   //====================================

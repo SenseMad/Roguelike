@@ -7,7 +7,7 @@ using Zenject;
 
 public class RoomManager : MonoBehaviour
 {
-  private List<Room> listRoomsCreated;
+  private List<Room> listRoomsCreated = new List<Room>();
 
   //====================================
 
@@ -36,8 +36,6 @@ public class RoomManager : MonoBehaviour
   private void Start()
   {
     CurrentIndexRoom = 0;
-
-    listRoomsCreated = new List<Room>();
   }
 
   private void OnEnable()
@@ -64,30 +62,6 @@ public class RoomManager : MonoBehaviour
   {
     CurrentRoom = Instantiate(parRoom, new Vector3(40, 10, 0), Quaternion.identity);
   }
-
-  /*public void TryPrefabRoom()
-  {
-    List<Room> roomPrefabs = LevelManager.CurrentLocationData.ListRoomPrefabs;
-
-    int newIndexRoom = Random.Range(0, roomPrefabs.Count);
-    Room newRoom = roomPrefabs[newIndexRoom];
-
-    int numberAttempts = 0;
-
-    while (listRoomsCreated.Contains(newRoom))
-    {
-      newIndexRoom = Random.Range(0, roomPrefabs.Count);
-      newRoom = roomPrefabs[newIndexRoom];
-
-      if (numberAttempts > roomPrefabs.Count)
-        return;
-
-      numberAttempts++;
-    }
-
-    listRoomsCreated.Add(newRoom);
-    OnCreatedRoom?.Invoke(newRoom);
-  }*/
 
   public void TryPrefabRoom()
   {
