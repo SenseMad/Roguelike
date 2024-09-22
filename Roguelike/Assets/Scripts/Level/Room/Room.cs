@@ -10,11 +10,13 @@ public class Room : MonoBehaviour
 
   //------------------------------------
 
-  private Character character;
-
   private List<Transform> spawnPointUsed = new List<Transform>();
 
   //====================================
+
+  public RoomPortal RoomPortal { get; private set; }
+
+  public Transform SpawnPointCharacter => _spawnPointCharacter;
 
   public List<Transform> SpawnPointsEnemies => _spawnPointsEnemies;
 
@@ -22,12 +24,7 @@ public class Room : MonoBehaviour
 
   private void Awake()
   {
-    character = Character.Instance;
-  }
-
-  private void OnEnable()
-  {
-    //character.transform.position = _spawnPointCharacter.position;
+    RoomPortal = GetComponentInChildren<RoomPortal>();
   }
 
   //====================================

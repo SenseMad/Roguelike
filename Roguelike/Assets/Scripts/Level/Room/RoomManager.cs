@@ -5,8 +5,14 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 using Zenject;
 
-public class RoomManager : MonoBehaviour
+public class RoomManager : SingletonInSceneNoInstance<RoomManager>
 {
+  [SerializeField] private float _roomLoadingTime = 2.0f;
+
+  //------------------------------------
+
+  private Character character;
+
   private List<Room> listRoomsCreated = new List<Room>();
 
   //====================================
@@ -33,6 +39,13 @@ public class RoomManager : MonoBehaviour
 
   //====================================
 
+  protected new void Awake()
+  {
+    base.Awake();
+
+    character = Character.Instance;
+  }
+
   private void Start()
   {
     CurrentIndexRoom = 0;
@@ -48,19 +61,18 @@ public class RoomManager : MonoBehaviour
     OnCreatedRoom -= CreateRoom;
   }
 
-  private void Update()
-  {
-    if (Input.GetKeyDown(KeyCode.L))
-    {
-      RemoveRoom();
-    }
-  }
-
   //====================================
 
   public void CreateRoom(Room parRoom)
   {
     CurrentRoom = Instantiate(parRoom, new Vector3(40, 10, 0), Quaternion.identity);
+
+    CurrentRoom.RoomPortal.OnEnteredPortal += RemoveRoom;
+
+    character.Controller.enabled = false;
+    character.transform.position = CurrentRoom.SpawnPointCharacter.position;
+    character.transform.rotation = Quaternion.Euler(Vector3.zero);
+    character.Controller.enabled = true;
   }
 
   public void TryPrefabRoom()
@@ -89,23 +101,40 @@ public class RoomManager : MonoBehaviour
     if (!createdRooms.Contains(newRoom))
     {
       listRoomsCreated.Add(newRoom);
-      OnCreatedRoom?.Invoke(newRoom);
+      StartCoroutine(ChangeRoom(newRoom));
+      //OnCreatedRoom?.Invoke(newRoom);
     }
   }
 
   public void RemoveRoom()
   {
     if (CurrentRoom != null)
+    {
+      CurrentRoom.RoomPortal.OnEnteredPortal -= RemoveRoom;
       Destroy(CurrentRoom.gameObject);
+    }
 
     TryPrefabRoom();
   }
 
-  public void ChangeRoom()
+  /*public void ChangeRoom()
   {
     CurrentIndexRoom++;
 
     OnChangeRoom?.Invoke(CurrentIndexRoom);
+  }*/
+
+  //====================================
+
+  public IEnumerator ChangeRoom(Room parRoom)
+  {
+    // Затемнение экрана
+    character.Controller.enabled = false;
+
+    yield return new WaitForSeconds(_roomLoadingTime);
+
+    OnCreatedRoom?.Invoke(parRoom);
+    // Убрать затемнение экрана
   }
 
   //====================================

@@ -9,7 +9,7 @@ namespace Roguelike.Installers
     {
       Container.Bind<LevelManager>().FromComponentInHierarchy().AsSingle().NonLazy();
 
-      Container.Bind<RoomManager>().FromComponentInHierarchy().AsSingle().NonLazy();
+      //Container.Bind<RoomManager>().FromComponentInHierarchy().AsSingle().NonLazy();
     }
   }
 }

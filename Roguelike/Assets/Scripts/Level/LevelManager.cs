@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Zenject;
 
 public class LevelManager : MonoBehaviour
 {
@@ -16,17 +15,16 @@ public class LevelManager : MonoBehaviour
 
   //====================================
 
-  [Inject]
-  private void Construct(RoomManager parRoomManager)
+  private void Awake()
   {
-    RoomManager = parRoomManager;
+    RoomManager = RoomManager.Instance;
   }
 
   //====================================
 
   private void Start()
   {
-    RoomManager.TryPrefabRoom();
+    RoomManager.CreateRoom(_currentLocationData.InitialRoom);
   }
 
   //====================================

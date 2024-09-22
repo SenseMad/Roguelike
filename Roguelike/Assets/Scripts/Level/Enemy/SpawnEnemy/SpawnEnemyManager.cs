@@ -1,11 +1,16 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 using Random = UnityEngine.Random;
 
 public abstract class SpawnEnemyManager : MonoBehaviour
 {
   [SerializeField] protected WaveManager waveManager;
+
+  //------------------------------------
+
+  private RoomManager roomManager;
 
   private readonly List<Enemy> listCreatedEnemies = new List<Enemy>();
 
@@ -15,7 +20,14 @@ public abstract class SpawnEnemyManager : MonoBehaviour
 
   public event Action<Enemy> OnEnemyCreated;
 
+  public event Action OnAllEneliesKilled;
+
   //====================================
+
+  private void Awake()
+  {
+    roomManager = RoomManager.Instance;
+  }
 
   private void OnEnable()
   {
@@ -123,6 +135,25 @@ public abstract class SpawnEnemyManager : MonoBehaviour
       return;
 
     waveManager.OnWaveCompletedInvoke();
+    AllEnemiesKilled();
+  }
+
+  //====================================
+
+  /// <summary>
+  /// It is triggered when killing all enemies on the wave
+  /// </summary>
+  public void AllEnemiesKilled()
+  {
+    var activeWave = waveManager.CurrentActiveWave;
+
+    if (activeWave.NumberEnemiesCreated < activeWave.NumberEnemiesWave)
+      return;
+
+    if (listCreatedEnemies.Count != 0)
+      return;
+
+    roomManager.CurrentRoom.RoomPortal.OpenPortalInvoke();
   }
 
   //====================================

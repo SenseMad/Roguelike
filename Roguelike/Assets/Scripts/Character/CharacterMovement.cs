@@ -55,6 +55,9 @@ public class CharacterMovement : MonoBehaviour
 
   public void Move(IInput parIInput)
   {
+    if (!character.Controller.enabled)
+      return;
+
     Vector2 frameInput = Vector3.ClampMagnitude(parIInput.Move(), 1.0f);
     var desiredDirection = new Vector3(frameInput.x, 0.0f, frameInput.y);
 

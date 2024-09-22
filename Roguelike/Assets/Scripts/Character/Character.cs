@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.TextCore.Text;
@@ -28,6 +29,10 @@ public class Character : SingletonInSceneNoInstance<Character>
   public bool IsRecharge { get; private set; }
 
   #endregion
+
+  //====================================
+
+  public event Action OnLoaded;
 
   //====================================
 
@@ -165,6 +170,11 @@ public class Character : SingletonInSceneNoInstance<Character>
   {
     Animator.SetBool("IsReloading", false);
     IsRecharge = false;
+  }
+
+  public void OnLoadedInvoke()
+  {
+    OnLoaded?.Invoke();
   }
 
   //====================================

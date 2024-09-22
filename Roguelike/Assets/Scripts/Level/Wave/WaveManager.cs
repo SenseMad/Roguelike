@@ -9,6 +9,8 @@ public class WaveManager : MonoBehaviour
 
   //------------------------------------
 
+  private RoomManager roomManager;
+
   private float tempTimeStartNextWave;
 
   private bool isWaveStarted;
@@ -36,6 +38,8 @@ public class WaveManager : MonoBehaviour
 
   private void Awake()
   {
+    roomManager = RoomManager.Instance;
+
     Initialize();
   }
 
@@ -87,20 +91,34 @@ public class WaveManager : MonoBehaviour
 
     CurrentActiveWave?.DeactivateWave();
 
-    if (CurrentWaveIndex > _waves.Length - 1)
+    TryNextWave();
+
+    /*if (CurrentWaveIndex > _waves.Length - 1)
     {
       OnWavesAreOver?.Invoke();
       isWavesIsOver = true;
       isWaveStarted = false;
       enabled = false;
       return;
-    }
+    }*/
 
     CurrentActiveWave = _waves[CurrentWaveIndex];
 
     CurrentActiveWave.ActivateWave();
     OnWaveStarted?.Invoke(CurrentActiveWave);
     tempTimeStartNextWave = 0;
+  }
+
+  public void TryNextWave()
+  {
+    if (CurrentWaveIndex + 1 > _waves.Length - 1)
+    {
+      Debug.Log("Последняя волна");
+      OnWavesAreOver?.Invoke();
+      isWavesIsOver = true;
+      isWaveStarted = false;
+      enabled = false;
+    }
   }
 
   public void WaveComplete(Wave parWave)
@@ -140,6 +158,11 @@ public class WaveManager : MonoBehaviour
   public void OnWaveCompletedInvoke()
   {
     OnWaveCompleted?.Invoke(CurrentActiveWave);
+  }
+
+  public void OnWavesAreOverInvoke()
+  {
+    OnWavesAreOver?.Invoke();
   }
 
   //====================================

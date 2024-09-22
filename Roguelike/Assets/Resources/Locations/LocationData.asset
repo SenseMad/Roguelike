@@ -14,5 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _location: 0
   _numberRooms: 0
+  _initialRoom: {fileID: 5608830121812156433, guid: 72a0c51d36f735a4faca0a88bc1e388d, type: 3}
   _listRoomPrefabs:
-  - {fileID: 5608830121812156433, guid: 72a0c51d36f735a4faca0a88bc1e388d, type: 3}
+  - {fileID: 5608830121812156433, guid: 0953feedee964564eaae09c84d9caf82, type: 3}
