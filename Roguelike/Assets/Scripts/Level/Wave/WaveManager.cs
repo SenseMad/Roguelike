@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 
 public class WaveManager : MonoBehaviour
 {
@@ -8,6 +9,8 @@ public class WaveManager : MonoBehaviour
   [SerializeField] private float _timeStartNextWave = 0.0f; // Time until the start of the next wave
 
   //------------------------------------
+
+  private Character character;
 
   private RoomManager roomManager;
 
@@ -38,6 +41,8 @@ public class WaveManager : MonoBehaviour
 
   private void Awake()
   {
+    character = Character.Instance;
+
     roomManager = RoomManager.Instance;
 
     Initialize();
@@ -45,16 +50,20 @@ public class WaveManager : MonoBehaviour
 
   private void Start()
   {
-    StartWaves();
+    //StartWaves();
   }
 
   private void OnEnable()
   {
+    character.OnLoaded += StartWaves;
+
     OnWaveCompleted += WaveComplete;
   }
 
   private void OnDisable()
   {
+    character.OnLoaded -= StartWaves;
+
     OnWaveCompleted -= WaveComplete;
   }
 

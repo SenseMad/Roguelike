@@ -27,7 +27,7 @@ public class CharacterGrounded : MonoBehaviour
 
   //====================================
 
-  public bool Grounded { get; private set; }
+  public bool IsGrounded { get; private set; }
 
   //====================================
 
@@ -38,25 +38,26 @@ public class CharacterGrounded : MonoBehaviour
 
   private void Update()
   {
-    GroundedCheck();
+    IsGrounded = character.Controller.isGrounded;
+    //GroundedCheck();
 
-    wasGrounded = Grounded;
+    wasGrounded = IsGrounded;
   }
 
   //====================================
 
   public void Gravity(ref Vector3 parVelocity)
   {
-    character.Animator.SetBool(CharacterAnimations.IS_FALL, !Grounded);
+    //character.Animator.SetBool(CharacterAnimations.IS_FALL, !IsGrounded);
 
-    if (!character.Controller.isGrounded)
+    if (!IsGrounded)
     {
       if (wasGrounded)
         parVelocity.y = 0.0f;
 
       parVelocity.y -= _gravity * Time.deltaTime;
 
-      if (parVelocity.y > _maxFallSpeed)
+      if (parVelocity.y < -_maxFallSpeed)
         parVelocity.y = -_maxFallSpeed;
     }
   }
@@ -66,9 +67,9 @@ public class CharacterGrounded : MonoBehaviour
   private void GroundedCheck()
   {
     Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - _groundedOffset, transform.position.z);
-    Grounded = Physics.CheckSphere(spherePosition, _groundedRadius, _groundLayers, QueryTriggerInteraction.Ignore);
+    IsGrounded = Physics.CheckSphere(spherePosition, _groundedRadius, _groundLayers, QueryTriggerInteraction.Ignore);
 
-    character.Animator.SetBool(CharacterAnimations.IS_GROUNDED, Grounded);
+    //character.Animator.SetBool(CharacterAnimations.IS_GROUNDED, IsGrounded);
   }
 
   //====================================

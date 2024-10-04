@@ -9,9 +9,7 @@ public class WeaponInventory : MonoBehaviour
 
   [SerializeField] private Transform _container;
 
-  //------------------------------------
-
-  private List<Weapon> listWeapons = new List<Weapon>();
+  [SerializeField] private List<Weapon> _listWeapons = new List<Weapon>();
 
   //====================================
 
@@ -21,26 +19,26 @@ public class WeaponInventory : MonoBehaviour
 
   public Weapon GetLastWeapon()
   {
-    if (listWeapons.Count == 0)
+    if (_listWeapons.Count == 0)
       return null;
 
-    int previousWeaponIndex = listWeapons.IndexOf(ActiveWeapon) - 1;
+    int previousWeaponIndex = _listWeapons.IndexOf(ActiveWeapon) - 1;
     if (previousWeaponIndex < 0)
-      previousWeaponIndex = listWeapons.Count - 1;
+      previousWeaponIndex = _listWeapons.Count - 1;
 
-    return listWeapons[previousWeaponIndex];
+    return _listWeapons[previousWeaponIndex];
   }
 
   public Weapon GetNextWeapon()
   {
-    if (listWeapons.Count == 0)
+    if (_listWeapons.Count == 0)
       return null;
 
-    int nextWeaponIndex = listWeapons.IndexOf(ActiveWeapon) + 1;
-    if (nextWeaponIndex > listWeapons.Count - 1)
+    int nextWeaponIndex = _listWeapons.IndexOf(ActiveWeapon) + 1;
+    if (nextWeaponIndex > _listWeapons.Count - 1)
       nextWeaponIndex = 0;
 
-    return listWeapons[nextWeaponIndex];
+    return _listWeapons[nextWeaponIndex];
   }
 
   //====================================
@@ -50,10 +48,10 @@ public class WeaponInventory : MonoBehaviour
     if (parWeapon == null)
       return ActiveWeapon;
 
-    if (listWeapons.Count == 0)
+    if (_listWeapons.Count == 0)
       return ActiveWeapon;
 
-    if (!listWeapons.Contains(parWeapon))
+    if (!_listWeapons.Contains(parWeapon))
       return ActiveWeapon;
 
     if (parWeapon == ActiveWeapon)
@@ -65,6 +63,7 @@ public class WeaponInventory : MonoBehaviour
     ActiveWeapon = parWeapon;
     ActiveWeapon.gameObject.SetActive(true);
     ActiveWeapon.WeaponInteractable.SetCollider(false);
+    ActiveWeapon.Selected(true);
 
     return ActiveWeapon;
   }
@@ -74,7 +73,7 @@ public class WeaponInventory : MonoBehaviour
     if (parWeapon == null)
       return;
 
-    if (listWeapons.Count >= _maxAmountStoredWeapons)
+    if (_listWeapons.Count >= _maxAmountStoredWeapons)
     {
       ReplaceActive(parWeapon);
       return;
@@ -82,7 +81,7 @@ public class WeaponInventory : MonoBehaviour
 
     parWeapon.transform.SetParent(_container);
     parWeapon.WeaponPosition.SetPosition();
-    listWeapons.Add(parWeapon);
+    _listWeapons.Add(parWeapon);
 
     Equip(parWeapon);
   }
@@ -98,12 +97,13 @@ public class WeaponInventory : MonoBehaviour
     ActiveWeapon.transform.SetParent(null);
     ActiveWeapon.transform.SetPositionAndRotation(lastWeaponPosition, lastWeaponRotation);
     ActiveWeapon.WeaponInteractable.SetCollider(true);
+    ActiveWeapon.Selected(false);
 
     parWeapon.transform.SetParent(_container);
     parWeapon.WeaponPosition.SetPosition();
 
-    int currentWeaponIndex = listWeapons.IndexOf(ActiveWeapon);
-    listWeapons[currentWeaponIndex] = parWeapon;
+    int currentWeaponIndex = _listWeapons.IndexOf(ActiveWeapon);
+    _listWeapons[currentWeaponIndex] = parWeapon;
 
     var previousWeapon = ActiveWeapon;
 
@@ -118,10 +118,10 @@ public class WeaponInventory : MonoBehaviour
     if (parWeapon == null)
       return;
 
-    if (!listWeapons.Contains(parWeapon))
+    if (!_listWeapons.Contains(parWeapon))
       return;
 
-    listWeapons.Remove(parWeapon);
+    _listWeapons.Remove(parWeapon);
     Destroy(ActiveWeapon.gameObject);
     ActiveWeapon = null;
 
@@ -136,8 +136,9 @@ public class WeaponInventory : MonoBehaviour
     ActiveWeapon.transform.SetParent(null);
     ActiveWeapon.transform.position = parDropPosition;
     ActiveWeapon.WeaponInteractable.SetCollider(true);
+    ActiveWeapon.Selected(false);
 
-    listWeapons.Remove(ActiveWeapon);
+    _listWeapons.Remove(ActiveWeapon);
     ActiveWeapon = null;
 
     EquipLastWeapon();
@@ -147,10 +148,10 @@ public class WeaponInventory : MonoBehaviour
 
   private void EquipLastWeapon()
   {
-    if (listWeapons.Count == 0)
+    if (_listWeapons.Count == 0)
       return;
 
-    var lastWeapon = listWeapons[listWeapons.Count - 1];
+    var lastWeapon = _listWeapons[_listWeapons.Count - 1];
     Equip(lastWeapon);
   }
 

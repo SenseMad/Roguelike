@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.TextCore.Text;
 using Zenject;
 
 public class Character : SingletonInSceneNoInstance<Character>

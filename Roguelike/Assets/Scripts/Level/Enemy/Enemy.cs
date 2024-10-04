@@ -5,9 +5,17 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+  [SerializeField] private WeaponInventory _weaponInventory;
+
   [SerializeField] private Health _health;
 
+  //------------------------------------
+
+  public Animator Animator { get; private set; }
+
   //====================================
+
+  public WeaponInventory WeaponInventory => _weaponInventory;
 
   public Health Health => _health;
 
@@ -17,9 +25,9 @@ public class Enemy : MonoBehaviour
 
   //====================================
 
-  private void Start()
+  private void Awake()
   {
-    //OnDied?.Invoke(this);
+    Animator = GetComponent<Animator>();
   }
 
   //====================================

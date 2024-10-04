@@ -1,9 +1,9 @@
 using UnityEngine;
-using Zenject;
 
 public class WeaponInteractable : MonoBehaviour, IInteractable
 {
   private Weapon weapon;
+
   private Character character;
 
   private Collider interactCollider;
@@ -24,6 +24,8 @@ public class WeaponInteractable : MonoBehaviour, IInteractable
   public void Interact()
   {
     character.WeaponInventory.Add(weapon);
+
+    weapon.Selected(true);
 
     SetCollider(false);
   }

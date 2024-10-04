@@ -5,9 +5,14 @@ using UnityEngine;
 using Random = UnityEngine.Random;
 using Zenject;
 
+using Sirenix.OdinInspector;
+
 public class RoomManager : SingletonInSceneNoInstance<RoomManager>
 {
   [SerializeField] private float _roomLoadingTime = 2.0f;
+
+  [FoldoutGroup("UI")]
+  [SerializeField] private RoomUI _roomUI;
 
   //------------------------------------
 
@@ -28,6 +33,8 @@ public class RoomManager : SingletonInSceneNoInstance<RoomManager>
   public event Action<Room> OnCreatedRoom;
 
   public event Action<int> OnChangeRoom;
+
+  public event Action OnRoomAreOver;
 
   //====================================
 
@@ -100,41 +107,50 @@ public class RoomManager : SingletonInSceneNoInstance<RoomManager>
 
     if (!createdRooms.Contains(newRoom))
     {
-      listRoomsCreated.Add(newRoom);
       StartCoroutine(ChangeRoom(newRoom));
-      //OnCreatedRoom?.Invoke(newRoom);
     }
   }
 
   public void RemoveRoom()
   {
+    List<Room> roomPrefabs = LevelManager.CurrentLocationData.ListRoomPrefabs;
+
     if (CurrentRoom != null)
-    {
       CurrentRoom.RoomPortal.OnEnteredPortal -= RemoveRoom;
-      Destroy(CurrentRoom.gameObject);
+
+    if (listRoomsCreated.Count >= roomPrefabs.Count)
+    {
+      Debug.Log("All rooms have been created");
+      OnRoomAreOver?.Invoke();
+      return;
     }
 
     TryPrefabRoom();
   }
 
-  /*public void ChangeRoom()
-  {
-    CurrentIndexRoom++;
-
-    OnChangeRoom?.Invoke(CurrentIndexRoom);
-  }*/
-
   //====================================
 
   public IEnumerator ChangeRoom(Room parRoom)
   {
-    // Затемнение экрана
     character.Controller.enabled = false;
+    _roomUI.SetActive(true);
 
-    yield return new WaitForSeconds(_roomLoadingTime);
+    while (CurrentRoom != null && _roomUI.IsActive)
+      yield return null;
 
+    Destroy(CurrentRoom.gameObject);
+
+    listRoomsCreated.Add(parRoom);
     OnCreatedRoom?.Invoke(parRoom);
-    // Убрать затемнение экрана
+
+    _roomUI.SetActive(false);
+
+    while (_roomUI.IsActive)
+      yield return null;
+
+    character.Controller.enabled = true;
+
+    character.OnLoadedInvoke();
   }
 
   //====================================

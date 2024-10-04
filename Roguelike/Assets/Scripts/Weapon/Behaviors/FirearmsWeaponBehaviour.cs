@@ -1,9 +1,7 @@
 using System.Collections;
 using UnityEngine;
-using Zenject;
 
 using Sirenix.OdinInspector;
-using UnityEngine.TextCore.Text;
 
 public class FirearmsWeaponBehaviour : Weapon
 {
@@ -145,25 +143,25 @@ public class FirearmsWeaponBehaviour : Weapon
   {
     if (coroutineRecharge != null)
     {
-      Debug.LogWarning("ѕерезарадка уже запущена");
+      Debug.LogWarning("The recharge is already running");
       return;
     }
 
     if (parValue < 0)
     {
-      Debug.LogError("«начение перезар€дки не может быть меньше 0");
+      Debug.LogError("The recharge value cannot be less than 0");
       return;
     }
 
     if (currentAmountAmmo == 0)
     {
-      Debug.LogWarning("“екущее количество патронов равно 0, перезар€дка невозможна");
+      Debug.LogWarning("The current number of rounds is 0, reloading is not possible");
       return;
     }
 
     if (currentAmountAmmoInMagazine >= _maxAmountAmmoInMagazine)
     {
-      Debug.Log("“екущее количество патронов в магазине >= максимального значени€");
+      Debug.Log("The current number of rounds in the magazine >= the maximum value");
       return;
     }
 
@@ -228,7 +226,7 @@ public class FirearmsWeaponBehaviour : Weapon
   {
     if (parAudioClip == null)
     {
-      Debug.LogError($"«вук {parAudioClip} не найден!");
+      Debug.LogError($"The sound {parAudioClip} was not found!");
       return;
     }
 
