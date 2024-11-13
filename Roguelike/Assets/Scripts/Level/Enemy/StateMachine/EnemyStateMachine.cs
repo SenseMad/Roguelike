@@ -8,17 +8,29 @@ public class EnemyStateMachine : MonoBehaviour
 
   //====================================
 
+  public Enemy Enemy { get; private set; }
 
+  public EnemyIdleState IdleState { get; private set; }
+  public EnemyFollowState FollowState { get; private set; }
+  public EnemyAttackState AttackState { get; private set; }
+  public EnemyPatrolState PatrolState { get; private set; }
 
   //====================================
 
   private void Awake()
   {
+    Enemy = GetComponent<Enemy>();
 
+    IdleState = new EnemyIdleState();
+    FollowState = new EnemyFollowState();
+    AttackState = new EnemyAttackState();
+    PatrolState = new EnemyPatrolState();
   }
 
   public void Start()
   {
+    currentState = PatrolState;
+
     currentState.EnterState(this);
   }
 

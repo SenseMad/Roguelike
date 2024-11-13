@@ -10,14 +10,14 @@ public class SpawnEnemyDelay : SpawnEnemyManager
 
   public override void CreateEnemy(Vector3 parPosition)
   {
-    int totalNumberEnemiesWave = waveManager.CurrentActiveWave.NumberEnemiesWave;
+    int totalNumberEnemiesWave = _waveManager.CurrentActiveWave.NumberEnemiesWave;
 
     for (int i = 0; i < totalNumberEnemiesWave; i++)
     {
       base.CreateEnemy(parPosition);
     }
 
-    waveManager.CurrentActiveWave.OnWaveAreOverInvoke();
+    _waveManager.CurrentActiveWave.OnWaveAreOverInvoke();
 
     if (currentNumberEnemies >= totalNumberEnemiesWave)
     {

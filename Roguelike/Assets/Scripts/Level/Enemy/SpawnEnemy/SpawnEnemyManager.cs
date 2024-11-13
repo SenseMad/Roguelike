@@ -6,7 +6,8 @@ using Random = UnityEngine.Random;
 
 public abstract class SpawnEnemyManager : MonoBehaviour
 {
-  [SerializeField] protected WaveManager waveManager;
+  [SerializeField] protected WaveManager _waveManager;
+  [SerializeField] private List<Transform> _listPoints;
 
   //------------------------------------
 
@@ -15,6 +16,10 @@ public abstract class SpawnEnemyManager : MonoBehaviour
   private readonly List<Enemy> listCreatedEnemies = new List<Enemy>();
 
   protected int currentNumberEnemies;
+
+  //====================================
+
+  protected List<Transform> ListPoints => _listPoints;
 
   //====================================
 
@@ -33,14 +38,14 @@ public abstract class SpawnEnemyManager : MonoBehaviour
   {
     OnEnemyCreated += EnemyCreated;
 
-    waveManager.OnWaveStarted += WaveManager_OnWaveStarted;
+    _waveManager.OnWaveStarted += WaveManager_OnWaveStarted;
   }
 
   private void OnDisable()
   {
     OnEnemyCreated -= EnemyCreated;
 
-    waveManager.OnWaveStarted -= WaveManager_OnWaveStarted;
+    _waveManager.OnWaveStarted -= WaveManager_OnWaveStarted;
   }
 
   private void Update()
@@ -58,7 +63,7 @@ public abstract class SpawnEnemyManager : MonoBehaviour
 
   private void WaveManager_OnWaveStarted(Wave parWave)
   {
-    CreateEnemy(Vector3.zero);
+    CreateEnemy(_listPoints[0].position);
   }
 
   public virtual void CreateEnemy(Vector3 parPosition)
@@ -70,20 +75,20 @@ public abstract class SpawnEnemyManager : MonoBehaviour
 
     OnEnemyCreated?.Invoke(randomEnemy);
 
-    //Enemy enemy = Instantiate(randomEnemy, parPosition, Quaternion.identity);
+    Enemy enemy = Instantiate(randomEnemy, parPosition, Quaternion.identity);
 
     currentNumberEnemies++;
   }
 
   private Enemy GetRandomEnemy()
   {
-    var currentActiveWave = waveManager.CurrentActiveWave;
+    var currentActiveWave = _waveManager.CurrentActiveWave;
     int totalNumberEnemiesWave = currentActiveWave.NumberEnemiesWave;
 
     if (currentActiveWave.NumberEnemiesCreated >= totalNumberEnemiesWave)
       return null;
 
-    var waveSettings = waveManager.CurrentActiveWave.WaveSettings;
+    var waveSettings = _waveManager.CurrentActiveWave.WaveSettings;
 
     int numberAttempts = 0;
     Enemy newEnemy;
@@ -109,7 +114,7 @@ public abstract class SpawnEnemyManager : MonoBehaviour
 
     selectedWaveSetting.ReduceNumber();
 
-    Debug.Log($"ActiveWave: {waveManager.CurrentActiveWave.name} Enemy: {newEnemy}");
+    Debug.Log($"ActiveWave: {_waveManager.CurrentActiveWave.name} Enemy: {newEnemy}");
 
     return newEnemy;
   }
@@ -120,7 +125,7 @@ public abstract class SpawnEnemyManager : MonoBehaviour
   {
     listCreatedEnemies.Add(parEnemy);
 
-    waveManager.CurrentActiveWave.AddNumberEnemiesCreated();
+    _waveManager.CurrentActiveWave.AddNumberEnemiesCreated();
 
     parEnemy.OnDied += Enemy_OnDied;
   }
@@ -134,7 +139,7 @@ public abstract class SpawnEnemyManager : MonoBehaviour
     if (listCreatedEnemies.Count != 0)
       return;
 
-    waveManager.OnWaveCompletedInvoke();
+    _waveManager.OnWaveCompletedInvoke();
     AllEnemiesKilled();
   }
 
@@ -145,7 +150,7 @@ public abstract class SpawnEnemyManager : MonoBehaviour
   /// </summary>
   public void AllEnemiesKilled()
   {
-    var activeWave = waveManager.CurrentActiveWave;
+    var activeWave = _waveManager.CurrentActiveWave;
 
     if (activeWave.NumberEnemiesCreated < activeWave.NumberEnemiesWave)
       return;
